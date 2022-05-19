@@ -32,7 +32,7 @@ spec:
           {{- with .Values.image }}
           image: "{{.registry}}/{{ .repository }}:{{ .tag | default $appVersion }}"
           {{- end}}
-          args: 
+          args:
             - "-l"
             - "{{ .Values.logLevel}}"
             - "-b"
@@ -51,6 +51,14 @@ spec:
             {{- if .Values.persistence.enabled }}
             - "-f"
             - "/data/"
+            {{- end }}
+            {{- if .Values.multithreading.enabled }}
+            - "-w"
+            - {{ .Values.multithreading.workers | quote }}
+            {{- end }}
+            {{- if .Values.redis.enabled }}
+            - "--redisEndpoint"
+            - {{ include "community-solid-server.redisEndpoint" . | quote }}
             {{- end }}
             {{- range $val := .Values.customParameters }}
             - {{ $val.flag | quote }}

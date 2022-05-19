@@ -68,8 +68,16 @@ Pass a correct baseUrl
 {{- if .Values.baseUrlOverride }}
 {{- .Values.baseUrlOverride }}
 {{- else if .Values.ingress.enabled }}
-{{- printf "http://%s%s" .Values.ingress.host .Values.ingress.path}}
+{{- printf "https://%s%s" .Values.ingress.host .Values.ingress.path}}
 {{- else }}
 {{- printf "http://%s.%s/" ( include "community-solid-server.fullname" . ) .Release.Namespace }}
 {{- end }}
 {{- end }}
+
+
+{{- define "community-solid-server.redisEndpoint" -}}
+{{- if .Values.redis.enabled }}
+  {{- $name := default .Release.Name .Values.redis.fullnameOverride }}
+  {{- printf "%s-headless:6379" $name }}
+{{- end }}
+{{- end -}}
